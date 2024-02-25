@@ -6,4 +6,8 @@
     <color name="buttons_color_background">#501B58D1</color>
     <color name="buttons_color">#4039F6</color> //#CD1723FB
     <color name="inactive_button_color">#BFFFFFFF</color>
+    <color name="background01">#FF181A20</color>
+    <color name="background03">#FF1F222A</color>
+    <color name="background02">#FF262A34</color>
+    <color name="deactive">#FF5E6272</color>
 </resources>

@@ -3,10 +3,16 @@ package com.example.placesaccounter.db;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 
+import com.example.placesaccounter.listAdapter.ModelLearner;
+import com.example.placesaccounter.listAdapter.ModelRoom;
+
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class DbManager {
     private Context context;
@@ -19,6 +25,12 @@ public class DbManager {
     }
 
     public void openDb() {
+        try {
+            dbHelper.updateDataBase();
+        } catch (IOException mIOException) {
+            throw new Error("UnableToUpdateDatabase");
+        }
+
         db = dbHelper.getWritableDatabase();
     }
 
@@ -35,11 +47,12 @@ public class DbManager {
         db.insert(MyConstants.TABLE_LEARNER_NAME, null, cv);
     }
 
-    public List<String> readFromDb() {
-        List<String> tempList = new ArrayList<>();
+    public List<ModelRoom> readFromDb() {
+        List<ModelRoom> roomList = new ArrayList<>();
+        List<ModelLearner> residentsList = new ArrayList<>();
 
-        Cursor cursor = db.query(
-                MyConstants.TABLE_LEARNER_NAME,
+        Cursor cursor_rooms = db.query(
+                MyConstants.TABLE_ROOM_NAME,
                 null,
                 null,
                 null,
@@ -47,10 +60,25 @@ public class DbManager {
                 null,
                 null);
 
-        while (cursor.moveToNext()) {
-            tempList.add(cursor.getInt())
+        while (cursor_rooms.moveToNext()) {
+            Cursor cursor_residents = db.rawQuery("SELECT * FROM learners WHERE room_number = ?",
+                    new String[]{String.valueOf(cursor_rooms.getInt(cursor_rooms.getColumnIndexOrThrow(MyConstants.ROOM_NUMBER)))});
+
+            residentsList.clear();
+            while (cursor_residents.moveToNext()) {
+                residentsList.add(new ModelLearner(cursor_residents.getInt(cursor_residents.getColumnIndexOrThrow(MyConstants.ROOM_NUMBER)),
+                                cursor_residents.getInt(cursor_residents.getColumnIndexOrThrow(MyConstants.STREAM_NUMBER)),
+                                cursor_residents.getString(cursor_residents.getColumnIndexOrThrow(MyConstants.CHECK_IN_DATE)),
+                                cursor_residents.getString(cursor_residents.getColumnIndexOrThrow(MyConstants.CHECK_OUT_DATE))));
+            }
+
+            roomList.add(new ModelRoom(cursor_rooms.getInt(cursor_rooms.getColumnIndexOrThrow(MyConstants.FLOOR_NUMBER)),
+                    cursor_rooms.getInt(cursor_rooms.getColumnIndexOrThrow(MyConstants.ROOM_NUMBER)),
+                    cursor_rooms.getInt(cursor_rooms.getColumnIndexOrThrow(MyConstants.BEDS_NUMBER)),
+                    residentsList));
         }
 
-        cursor.close();
+        cursor_rooms.close();
+        return roomList;
     }
 }

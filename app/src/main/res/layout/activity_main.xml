@@ -8,6 +8,7 @@
     tools:context=".MainActivity">
 
     <LinearLayout
+        android:id="@+id/linearLayout"
         android:layout_width="410dp"
         android:layout_height="52dp"
         android:layout_marginBottom="4dp"
@@ -22,8 +23,8 @@
             android:id="@+id/img_btn_MainActivity"
             android:layout_width="82dp"
             android:layout_height="match_parent"
-            android:layout_marginStart="10sp"
-            android:layout_marginEnd="10sp"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
             android:layout_weight="1"
             android:background="@drawable/roundcorner"
             android:contentDescription="@string/app_name"
@@ -35,8 +36,8 @@
             android:id="@+id/img_btn_SecondActivity"
             android:layout_width="82dp"
             android:layout_height="match_parent"
-            android:layout_marginStart="10sp"
-            android:layout_marginEnd="10sp"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
             android:layout_weight="1"
             android:background="@color/background"
             android:backgroundTint="@color/background"
@@ -49,8 +50,8 @@
             android:id="@+id/img_btn_ThirdActivity"
             android:layout_width="82dp"
             android:layout_height="match_parent"
-            android:layout_marginStart="10sp"
-            android:layout_marginEnd="10sp"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
             android:layout_weight="1"
             android:background="@color/background"
             android:backgroundTint="@color/background"
@@ -63,8 +64,8 @@
             android:id="@+id/img_btn_FourthActivity"
             android:layout_width="82dp"
             android:layout_height="match_parent"
-            android:layout_marginStart="10sp"
-            android:layout_marginEnd="10sp"
+            android:layout_marginStart="10dp"
+            android:layout_marginEnd="10dp"
             android:layout_weight="1"
             android:background="@drawable/roundcorner"
             android:backgroundTint="@color/background"
@@ -76,5 +77,14 @@
 
 
     </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rcView"
+        android:layout_width="409dp"
+        android:layout_height="760dp"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
