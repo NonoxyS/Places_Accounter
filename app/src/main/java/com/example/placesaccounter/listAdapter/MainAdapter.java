@@ -17,10 +17,12 @@ import java.util.List;
 public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MyViewHolder> {
     private Context context;
     private List<ModelRoom> itemArray;
+    private OnClickListener onClickListener;
 
-    public MainAdapter(Context context) {
+    public MainAdapter(Context context, OnClickListener onClickListener) {
         this.context = context;
         itemArray = new ArrayList<>();
+        this.onClickListener = onClickListener;
     }
 
     @NonNull
@@ -33,6 +35,14 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MyViewHolder> 
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
         holder.setData(itemArray.get(position));
+
+        // Set listener on item
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onClickListener.onItemClick(itemArray.get(holder.getAdapterPosition()), holder.getAdapterPosition());
+            }
+        });
     }
 
     @Override

@@ -8,9 +8,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
 import com.example.placesaccounter.db.DbManager;
 import com.example.placesaccounter.listAdapter.MainAdapter;
+import com.example.placesaccounter.listAdapter.ModelRoom;
+import com.example.placesaccounter.listAdapter.OnClickListener;
 
 public class MainActivity extends AppCompatActivity {
     private DbManager dbManager;
@@ -25,8 +28,16 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void init() {
+        OnClickListener clickListener = new OnClickListener() { // Test Listener
+            @Override
+            public void onItemClick(ModelRoom modelRoom, int position) {
+                Toast.makeText(getApplicationContext(), "Была выбрана комната: " + modelRoom.getRoom_number(),
+                        Toast.LENGTH_SHORT).show();
+            }
+        };
+
         dbManager = new DbManager(this);
-        mainAdapter = new MainAdapter(this);
+        mainAdapter = new MainAdapter(this, clickListener);
         rcView = findViewById(R.id.rcView);
         rcView.setLayoutManager(new LinearLayoutManager(this));
         rcView.setAdapter(mainAdapter);
