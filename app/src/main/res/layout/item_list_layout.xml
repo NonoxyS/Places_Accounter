@@ -1,75 +1,72 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/places_container"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="65dp"
+    android:layout_marginHorizontal="2dp"
+    android:layout_marginVertical="2dp"
+    android:background="@drawable/label_bg"
+    android:gravity="center_vertical"
+    android:orientation="horizontal">
 
     <LinearLayout
-        android:id="@+id/places_container"
-        android:layout_width="match_parent"
-        android:layout_height="65dp"
-        android:layout_marginHorizontal="2dp"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="start|top"
         android:layout_marginVertical="2dp"
-        android:background="@drawable/label_bg"
-        android:gravity="center_vertical"
-        android:orientation="horizontal">
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_gravity="start|top"
-            android:layout_marginVertical="2dp"
-            android:orientation="vertical"
-            android:paddingHorizontal="10dp">
-
-            <TextView
-                android:id="@+id/floor_number_item"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:textAlignment="center"
-                android:textColor="@color/deactive"
-                android:textSize="14sp"
-                tools:text="Этаж: 3" />
-
-            <TextView
-                android:id="@+id/room_number_item"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:textAlignment="center"
-                android:textColor="@color/deactive"
-                android:textSize="14sp"
-                tools:text="Комната: 329" />
-
-            <TextView
-                android:id="@+id/room_capacity_item"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/deactive"
-                android:textSize="14sp"
-                tools:text="0/6" />
-
-        </LinearLayout>
-
-        <View
-            android:layout_width="1dp"
-            android:layout_height="match_parent"
-            android:layout_marginVertical="5dp"
-            android:background="@color/deactive" />
+        android:orientation="vertical"
+        android:paddingHorizontal="10dp">
 
         <TextView
-            android:id="@+id/resident_item"
+            android:id="@+id/floor_number_item"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="top"
-            android:layout_marginVertical="2dp"
-            android:layout_marginStart="30dp"
-            android:textColor="@android:color/white"
+            android:gravity="center"
+            android:textAlignment="center"
+            android:textColor="@color/deactive"
             android:textSize="14sp"
-            tools:text="1824    с 12.01.2024 по 21.02.2024" />
+            tools:text="Этаж: 3" />
+
+        <TextView
+            android:id="@+id/room_number_item"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textAlignment="center"
+            android:textColor="@color/deactive"
+            android:textSize="14sp"
+            tools:text="Комната: 329" />
+
+        <TextView
+            android:id="@+id/room_capacity_item"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/deactive"
+            android:textSize="14sp"
+            tools:text="0/6" />
 
     </LinearLayout>
 
+    <View
+        android:layout_width="1dp"
+        android:layout_height="match_parent"
+        android:layout_marginVertical="5dp"
+        android:background="@color/deactive" />
+
+    <TextView
+        android:id="@+id/resident_item"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top"
+        android:layout_marginVertical="2dp"
+        android:layout_marginStart="30dp"
+        android:textColor="@android:color/white"
+        android:textSize="14sp"
+        tools:text="1824    с 12.01.2024 по 21.02.2024" />
+
 </LinearLayout>
+
