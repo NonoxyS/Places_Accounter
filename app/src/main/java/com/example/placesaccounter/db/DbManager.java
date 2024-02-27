@@ -60,13 +60,14 @@ public class DbManager {
                 null,
                 null);
 
-        while (cursor_rooms.moveToNext()) {
+        while (cursor_rooms.moveToNext()) { // Find all residents who live in certain room
             Cursor cursor_residents = db.rawQuery("SELECT * FROM learners WHERE room_number = ?",
                     new String[]{String.valueOf(cursor_rooms.getInt(cursor_rooms.getColumnIndexOrThrow(MyConstants.ROOM_NUMBER)))});
 
             residentsList.clear();
             while (cursor_residents.moveToNext()) {
-                residentsList.add(new ModelLearner(cursor_residents.getInt(cursor_residents.getColumnIndexOrThrow(MyConstants.ROOM_NUMBER)),
+                residentsList.add(new ModelLearner(cursor_residents.getInt(cursor_residents.getColumnIndexOrThrow(MyConstants._ID)),
+                                cursor_residents.getInt(cursor_residents.getColumnIndexOrThrow(MyConstants.ROOM_NUMBER)),
                                 cursor_residents.getInt(cursor_residents.getColumnIndexOrThrow(MyConstants.STREAM_NUMBER)),
                                 cursor_residents.getString(cursor_residents.getColumnIndexOrThrow(MyConstants.CHECK_IN_DATE)),
                                 cursor_residents.getString(cursor_residents.getColumnIndexOrThrow(MyConstants.CHECK_OUT_DATE))));
@@ -76,6 +77,8 @@ public class DbManager {
                     cursor_rooms.getInt(cursor_rooms.getColumnIndexOrThrow(MyConstants.ROOM_NUMBER)),
                     cursor_rooms.getInt(cursor_rooms.getColumnIndexOrThrow(MyConstants.BEDS_NUMBER)),
                     residentsList));
+
+            if (cursor_residents.isLast()) cursor_residents.close();
         }
 
         cursor_rooms.close();

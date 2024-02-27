@@ -1,12 +1,14 @@
 package com.example.placesaccounter.listAdapter;
 
 public class ModelLearner {
+    private int _id;
     private int room_number;
     private int stream_number;
     private String check_in_date;
     private String check_out_date;
 
-    public ModelLearner(int room_number, int stream_number, String check_in_date, String check_out_date) {
+    public ModelLearner(int _id, int room_number, int stream_number, String check_in_date, String check_out_date) {
+        this._id = _id;
         this.room_number = room_number;
         this.stream_number = stream_number;
         this.check_in_date = check_in_date;
