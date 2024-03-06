@@ -5,6 +5,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import com.example.placesaccounter.listAdapter.ModelLearner;
 import com.example.placesaccounter.listAdapter.ModelRoom;
@@ -12,7 +13,6 @@ import com.example.placesaccounter.listAdapter.ModelRoom;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class DbManager {
     private Context context;
@@ -30,7 +30,6 @@ public class DbManager {
         } catch (IOException mIOException) {
             throw new Error("UnableToUpdateDatabase");
         }
-
         db = dbHelper.getWritableDatabase();
     }
 
@@ -38,18 +37,33 @@ public class DbManager {
         dbHelper.close();
     }
 
-    public void insertToDb(int room_number,int stream_number, String check_in_date, String check_out_date) {
+    public long insertToDb(int room_number, int stream_number, String check_in_date, String check_out_date) {
         ContentValues cv = new ContentValues();
         cv.put(MyConstants.ROOM_NUMBER, room_number);
         cv.put(MyConstants.STREAM_NUMBER, stream_number);
         cv.put(MyConstants.CHECK_IN_DATE, check_in_date);
         cv.put(MyConstants.CHECK_OUT_DATE, check_out_date);
-        db.insert(MyConstants.TABLE_LEARNER_NAME, null, cv);
+        long result = db.insert(MyConstants.TABLE_LEARNER_NAME, null, cv);
+
+        return result; // Return the row ID of the newly inserted row
+    }
+
+    public void deleteFromDb(long _id) {
+        db.delete(MyConstants.TABLE_LEARNER_NAME, MyConstants._ID + "=?", new String[]{String.valueOf(_id)});
+    }
+
+    public void updateDbEntry(int stream_number, String check_in_date, String check_out_date, long _id) {
+        ContentValues cv = new ContentValues();
+        cv.put(MyConstants.STREAM_NUMBER, stream_number);
+        cv.put(MyConstants.CHECK_IN_DATE, check_in_date);
+        cv.put(MyConstants.CHECK_OUT_DATE, check_out_date);
+
+        db.update(MyConstants.TABLE_LEARNER_NAME, cv, MyConstants._ID + "=?",
+                new String[] { String.valueOf(_id) });
     }
 
     public List<ModelRoom> readFromDb() {
         List<ModelRoom> roomList = new ArrayList<>();
-        List<ModelLearner> residentsList = new ArrayList<>();
 
         Cursor cursor_rooms = db.query(
                 MyConstants.TABLE_ROOM_NAME,
@@ -61,12 +75,14 @@ public class DbManager {
                 null);
 
         while (cursor_rooms.moveToNext()) { // Find all residents who live in certain room
-            Cursor cursor_residents = db.rawQuery("SELECT * FROM learners WHERE room_number = ?",
-                    new String[]{String.valueOf(cursor_rooms.getInt(cursor_rooms.getColumnIndexOrThrow(MyConstants.ROOM_NUMBER)))});
+            int roomNumber = cursor_rooms.getInt(cursor_rooms.getColumnIndexOrThrow(MyConstants.ROOM_NUMBER));
+            List<ModelLearner> residentList = new ArrayList<>();
 
-            residentsList.clear();
+            Cursor cursor_residents = db.rawQuery("SELECT * FROM learners WHERE room_number = ?",
+                    new String[]{String.valueOf(roomNumber)});
+
             while (cursor_residents.moveToNext()) {
-                residentsList.add(new ModelLearner(cursor_residents.getInt(cursor_residents.getColumnIndexOrThrow(MyConstants._ID)),
+                residentList.add(new ModelLearner(cursor_residents.getInt(cursor_residents.getColumnIndexOrThrow(MyConstants._ID)),
                                 cursor_residents.getInt(cursor_residents.getColumnIndexOrThrow(MyConstants.ROOM_NUMBER)),
                                 cursor_residents.getInt(cursor_residents.getColumnIndexOrThrow(MyConstants.STREAM_NUMBER)),
                                 cursor_residents.getString(cursor_residents.getColumnIndexOrThrow(MyConstants.CHECK_IN_DATE)),
@@ -76,7 +92,7 @@ public class DbManager {
             roomList.add(new ModelRoom(cursor_rooms.getInt(cursor_rooms.getColumnIndexOrThrow(MyConstants.FLOOR_NUMBER)),
                     cursor_rooms.getInt(cursor_rooms.getColumnIndexOrThrow(MyConstants.ROOM_NUMBER)),
                     cursor_rooms.getInt(cursor_rooms.getColumnIndexOrThrow(MyConstants.BEDS_NUMBER)),
-                    residentsList));
+                    residentList));
 
             if (cursor_residents.isLast()) cursor_residents.close();
         }

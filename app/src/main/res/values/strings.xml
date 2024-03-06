@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">Places Accounter</string>
+    <string name="stream_number">Поток</string>
+    <string name="check_in_date">Дата въезда</string>
+    <string name="check_out_date">Дата выезда</string>
+    <string name="save">Сохранить</string>
+    <string name="cancel">Отменить</string>
 </resources>

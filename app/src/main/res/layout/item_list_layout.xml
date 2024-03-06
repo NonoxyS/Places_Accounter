@@ -6,7 +6,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/places_container"
     android:layout_width="match_parent"
-    android:layout_height="65dp"
+    android:layout_height="wrap_content"
     android:layout_marginHorizontal="2dp"
     android:layout_marginVertical="2dp"
     android:background="@drawable/label_bg"
@@ -14,7 +14,7 @@
     android:orientation="horizontal">
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="120dp"
         android:layout_height="match_parent"
         android:layout_gravity="start|top"
         android:layout_marginVertical="2dp"
@@ -39,7 +39,7 @@
             android:textAlignment="center"
             android:textColor="@color/deactive"
             android:textSize="14sp"
-            tools:text="Комната: 329" />
+            tools:text="Комната: 3290" />
 
         <TextView
             android:id="@+id/room_capacity_item"
@@ -57,16 +57,70 @@
         android:layout_marginVertical="5dp"
         android:background="@color/deactive" />
 
-    <TextView
-        android:id="@+id/resident_item"
+    <LinearLayout
+        android:id="@+id/stream_number_layout"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="top"
-        android:layout_marginVertical="2dp"
-        android:layout_marginStart="30dp"
-        android:textColor="@android:color/white"
-        android:textSize="14sp"
-        tools:text="1824    с 12.01.2024 по 21.02.2024" />
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_marginHorizontal="5dp"
+        android:paddingBottom="5dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="5dp"
+            android:layout_marginVertical="2dp"
+            android:text="@string/stream_number"
+            android:textColor="@color/deactive"
+            android:textSize="14sp" />
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="1dp"
+        android:layout_height="match_parent"
+        android:layout_marginVertical="5dp"
+        android:background="@color/deactive" />
+
+    <LinearLayout
+        android:id="@+id/check_in_date_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_marginHorizontal="5dp"
+        android:paddingBottom="5dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="5dp"
+            android:layout_marginVertical="2dp"
+            android:text="@string/check_in_date"
+            android:textColor="@color/deactive"
+            android:textSize="14sp" />
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/check_out_date_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_marginStart="15dp"
+        android:paddingBottom="5dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="5dp"
+            android:layout_marginVertical="2dp"
+            android:text="@string/check_out_date"
+            android:textColor="@color/deactive"
+            android:textSize="14sp" />
+
+    </LinearLayout>
+
 
 </LinearLayout>
 

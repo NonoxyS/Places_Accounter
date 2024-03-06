@@ -4,21 +4,44 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.DatePickerDialog;
+import android.app.Dialog;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.text.InputType;
+import android.text.method.DigitsKeyListener;
+import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
+import android.widget.Button;
+import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.placesaccounter.db.DbManager;
+import com.example.placesaccounter.db.MyConstants;
 import com.example.placesaccounter.listAdapter.MainAdapter;
+import com.example.placesaccounter.listAdapter.ModelLearner;
 import com.example.placesaccounter.listAdapter.ModelRoom;
 import com.example.placesaccounter.listAdapter.OnClickListener;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
     private DbManager dbManager;
     private RecyclerView rcView;
     private MainAdapter mainAdapter;
+    final Calendar myCalendar = Calendar.getInstance();
     private ImageButton img_btn_Main, img_btn_Second, getImg_btn_Third, getImg_btn_Fourth;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,19 +51,269 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void init() {
-        OnClickListener clickListener = new OnClickListener() { // Test Listener
+        OnClickListener clickListener = new OnClickListener() { // RecyclerView Listener
             @Override
             public void onItemClick(ModelRoom modelRoom, int position) {
-                Toast.makeText(getApplicationContext(), "Была выбрана комната: " + modelRoom.getRoom_number(),
-                        Toast.LENGTH_SHORT).show();
+                showEditDialog(modelRoom, position);
             }
         };
 
         dbManager = new DbManager(this);
         mainAdapter = new MainAdapter(this, clickListener);
+
         rcView = findViewById(R.id.rcView);
         rcView.setLayoutManager(new LinearLayoutManager(this));
+
         rcView.setAdapter(mainAdapter);
+    }
+
+    private void showEditDialog(ModelRoom modelRoom, int position) {
+        Dialog editDialog = new Dialog(this);
+        editDialog.setContentView(R.layout.edit_item_dialog);
+        editDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+        final Map<String, Map<Integer, Integer>> editDialogIds = createEditDialogElements(editDialog, modelRoom);
+
+        Button saveButton = editDialog.findViewById(R.id.saveBtn);
+        Button cancelButton = editDialog.findViewById(R.id.cancelBtn);
+        saveButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                editDialogSaveBtn(editDialog, editDialogIds, modelRoom, position);
+                editDialog.dismiss();
+            }
+        });
+
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                editDialog.cancel();
+            }
+        });
+        editDialog.show();
+    }
+
+    private Map<String, Map<Integer, Integer>> createEditDialogElements(Dialog editDialog, ModelRoom modelRoom) {
+        final float scaleDisplay = getResources().getDisplayMetrics().density; // Display metrics
+        // (int) (<neededPixels> * scaleDisplay + 0.5f)
+
+        Map<String, Map<Integer, Integer>> generatedIds = new HashMap<>();
+        Map<Integer, Integer> streamNumberIds = new HashMap<>();
+        Map<Integer, Integer> checkInDateIds = new HashMap<>();
+        Map<Integer, Integer> checkOutDateIds = new HashMap<>();
+
+        LinearLayout editContainer = editDialog.findViewById(R.id.EditContainer);
+
+        for (int i = 0; i < modelRoom.getBeds_number(); i++) {
+            LinearLayout residentInfoContainer = new LinearLayout(this);
+            residentInfoContainer.setLayoutParams(new LinearLayout.LayoutParams
+                    (LinearLayout.LayoutParams.MATCH_PARENT, (int) (48 * scaleDisplay + 0.5f)));
+            residentInfoContainer.setOrientation(LinearLayout.HORIZONTAL);
+
+            TextView rowNumber = new TextView(this);
+            rowNumber.setLayoutParams(new LinearLayout.LayoutParams
+                    (LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT));
+            rowNumber.setText(new StringBuilder().append(i + 1).append(":").toString());
+            rowNumber.setGravity(Gravity.CENTER_VERTICAL);
+
+            EditText streamNumberEditText = new EditText(this);
+            streamNumberEditText.setLayoutParams(new LinearLayout.LayoutParams
+                    (LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT));
+            streamNumberEditText.setHint(R.string.stream_number);
+            streamNumberEditText.setGravity(Gravity.CENTER);
+            streamNumberIds.put(i, View.generateViewId());
+            streamNumberEditText.setInputType(InputType.TYPE_CLASS_NUMBER);
+            streamNumberEditText.setKeyListener(DigitsKeyListener.getInstance("0123456789"));
+            streamNumberEditText.setId(streamNumberIds.get(i));
+
+            EditText checkInDateEditText = new EditText(this);
+            checkInDateEditText.setLayoutParams(new LinearLayout.LayoutParams
+                    ((int) (120 * scaleDisplay + 0.5f), LinearLayout.LayoutParams.MATCH_PARENT));
+            checkInDateEditText.setHint(R.string.check_in_date);
+            checkInDateEditText.setClickable(false);
+            checkInDateEditText.setFocusable(false);
+            checkInDateEditText.setGravity(Gravity.CENTER);
+            selectDate(checkInDateEditText);
+            checkInDateIds.put(i, View.generateViewId());
+            checkInDateEditText.setId(checkInDateIds.get(i));
+
+            EditText checkOutDateEditText = new EditText(this);
+            checkOutDateEditText.setLayoutParams(new LinearLayout.LayoutParams
+                    ((int) (120 * scaleDisplay + 0.5f), LinearLayout.LayoutParams.MATCH_PARENT));
+            checkOutDateEditText.setHint(R.string.check_out_date);
+            checkOutDateEditText.setClickable(false);
+            checkOutDateEditText.setFocusable(false);
+            checkOutDateEditText.setGravity(Gravity.CENTER);
+            selectDate(checkOutDateEditText);
+            checkOutDateIds.put(i, View.generateViewId());
+            checkOutDateEditText.setId(checkOutDateIds.get(i));
+
+            ImageButton deleteResidentInfoBtn = new ImageButton(this);
+            deleteResidentInfoBtn.setLayoutParams(new LinearLayout.LayoutParams
+                    (LinearLayout.LayoutParams.MATCH_PARENT, (int) (30 * scaleDisplay + 0.5f)));
+            deleteResidentInfoBtn.setBackgroundResource(R.drawable.roundcorner);
+            deleteResidentInfoBtn.setImageResource(android.R.drawable.ic_menu_delete);
+            ((LinearLayout.LayoutParams) deleteResidentInfoBtn.getLayoutParams()).gravity = Gravity.CENTER;
+
+            deleteResidentInfoBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    streamNumberEditText.setText("");
+                    checkInDateEditText.setText("");
+                    checkOutDateEditText.setText("");
+                }
+            });
+
+
+            if (modelRoom.getLearners_in_room().size() > i) {
+                streamNumberEditText.setText(String.valueOf(modelRoom.getLearners_in_room().get(i).getStream_number()));
+                checkInDateEditText.setText(String.valueOf(modelRoom.getLearners_in_room().get(i).getCheck_in_date()));
+                checkOutDateEditText.setText(String.valueOf(modelRoom.getLearners_in_room().get(i).getCheck_out_date()));
+            }
+
+            residentInfoContainer.addView(rowNumber);
+            residentInfoContainer.addView(streamNumberEditText);
+            residentInfoContainer.addView(checkInDateEditText);
+            residentInfoContainer.addView(checkOutDateEditText);
+            residentInfoContainer.addView(deleteResidentInfoBtn);
+
+            editContainer.addView(residentInfoContainer);
+        }
+        generatedIds.put("streamNumberIds", streamNumberIds);
+        generatedIds.put("checkInDateIds", checkInDateIds);
+        generatedIds.put("checkOutDateIds", checkOutDateIds);
+        return generatedIds;
+    }
+
+    private void selectDate(EditText datePicker) {
+        DatePickerDialog.OnDateSetListener date = new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                myCalendar.set(Calendar.YEAR, year);
+                myCalendar.set(Calendar.MONTH, month);
+                myCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+
+                String myDateFormat = "dd-MM-yyyy";
+                SimpleDateFormat dateFormat = new SimpleDateFormat(myDateFormat, Locale.US);
+
+                datePicker.setText(dateFormat.format(myCalendar.getTime()));
+            }
+        };
+
+        datePicker.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new DatePickerDialog(MainActivity.this, date, myCalendar.get(Calendar.YEAR),
+                        myCalendar.get(Calendar.MONTH), myCalendar.get(Calendar.DAY_OF_MONTH)).show();
+            }
+        });
+    }
+
+    private void editDialogSaveBtn(Dialog editDialog, Map<String, Map<Integer, Integer>> editDialogIds,
+                                   ModelRoom modelRoom, int position) {
+
+        ArrayList<Integer> indexesForDeleting = new ArrayList<>(modelRoom.getLearners_in_room().size());
+
+        for (int i = 0; i < modelRoom.getBeds_number(); i++) {
+            EditText streamNumberET = editDialog.findViewById(editDialogIds.get("streamNumberIds").get(i));
+            EditText checkInDateET = editDialog.findViewById(editDialogIds.get("checkInDateIds").get(i));
+            EditText checkOutDateET = editDialog.findViewById(editDialogIds.get("checkOutDateIds").get(i));
+
+            if (modelRoom.getLearners_in_room().size() > i //There is a learner and there has been a change in his data
+                    && checkIfLearnerInfoChanged(editDialog, editDialogIds, modelRoom.getLearners_in_room().get(i), i)) {
+
+                handleEditedLearner(streamNumberET, checkInDateET, checkOutDateET, modelRoom, indexesForDeleting, i, position);
+
+            } else if (modelRoom.getLearners_in_room().size() < i + 1) {
+                handleAddedLearner(streamNumberET, checkInDateET, checkOutDateET, modelRoom, position);
+            }
+        }
+        removeDeletedLearners(modelRoom, indexesForDeleting);
+    }
+
+    private void handleEditedLearner(EditText streamNumberET, EditText checkInDateET, EditText checkOutDateET,
+                                     ModelRoom modelRoom, ArrayList<Integer> indexesForDeleting,
+                                     int indexLearner, int position) {
+
+        if (streamNumberET.getText().toString().isEmpty() &&
+                checkInDateET.getText().toString().isEmpty() &&
+                checkOutDateET.getText().toString().isEmpty()) {
+
+            deleteLearnerAndUpdateAdapter(modelRoom, indexesForDeleting, indexLearner, position);
+        }
+        else if (!streamNumberET.getText().toString().isEmpty() &&
+                !checkInDateET.getText().toString().isEmpty() &&
+                !checkOutDateET.getText().toString().isEmpty()) {
+
+            updateLearnerAndUpdateAdapter(modelRoom, streamNumberET, checkInDateET, checkOutDateET,
+                    indexLearner, position);
+        }
+    }
+
+    private void handleAddedLearner(EditText streamNumberET, EditText checkInDateET, EditText checkOutDateET,
+                                    ModelRoom modelRoom, int position) {
+        if (!streamNumberET.getText().toString().isEmpty() &&
+                !checkInDateET.getText().toString().isEmpty() &&
+                !checkOutDateET.getText().toString().isEmpty()) {
+
+            long _id = dbManager.insertToDb(modelRoom.getRoom_number(),
+                    Integer.parseInt(streamNumberET.getText().toString()),
+                    checkInDateET.getText().toString(),
+                    checkOutDateET.getText().toString());
+
+            addNewLearnerAndUpdateAdapter(modelRoom, streamNumberET, checkInDateET, checkOutDateET, _id, position);
+        }
+    }
+
+    private void removeDeletedLearners(ModelRoom modelRoom, ArrayList<Integer> indexesForDeleting) {
+        for (int i : indexesForDeleting) {
+            modelRoom.getLearners_in_room().remove(i);
+        }
+    }
+
+    private void deleteLearnerAndUpdateAdapter(ModelRoom modelRoom, ArrayList<Integer> indexesForDeleting,
+                                               int indexForDeleting, int position) {
+        dbManager.deleteFromDb(modelRoom.getLearners_in_room().get(indexForDeleting).get_id());
+        indexesForDeleting.add(indexForDeleting);
+        mainAdapter.updateAdapter(modelRoom, position);
+    }
+
+    private void addNewLearnerAndUpdateAdapter(ModelRoom modelRoom, EditText streamNumberET, EditText checkInDateET,
+                                               EditText checkOutDateET, long _id, int position) {
+        modelRoom.getLearners_in_room().add(new ModelLearner(_id,
+                modelRoom.getRoom_number(),
+                Integer.parseInt(streamNumberET.getText().toString()),
+                checkInDateET.getText().toString(),
+                checkOutDateET.getText().toString()));
+
+        mainAdapter.updateAdapter(modelRoom, position);
+    }
+
+    private void updateLearnerAndUpdateAdapter(ModelRoom modelRoom, EditText streamNumberET, EditText checkInDateET,
+                                               EditText checkOutDateET, int indexLearner, int position) {
+        modelRoom.getLearners_in_room().get(indexLearner).
+                setStream_number(Integer.parseInt(streamNumberET.getText().toString()));
+        modelRoom.getLearners_in_room().get(indexLearner).
+                setCheck_in_date(checkInDateET.getText().toString());
+        modelRoom.getLearners_in_room().get(indexLearner).
+                setCheck_out_date(checkOutDateET.getText().toString());
+
+        dbManager.updateDbEntry(Integer.parseInt(streamNumberET.getText().toString()),
+                checkInDateET.getText().toString(),
+                checkOutDateET.getText().toString(),
+                modelRoom.getLearners_in_room().get(indexLearner).get_id());
+        mainAdapter.updateAdapter(modelRoom, position);
+    }
+
+    private boolean checkIfLearnerInfoChanged(Dialog editDialog, Map<String, Map<Integer, Integer>> editDialogIds,
+                                              ModelLearner modelLearner, int rowNumber) {
+        EditText streamNumberET = editDialog.findViewById(editDialogIds.get("streamNumberIds").get(rowNumber));
+        EditText checkInDateET = editDialog.findViewById(editDialogIds.get("checkInDateIds").get(rowNumber));
+        EditText checkOutDateET = editDialog.findViewById(editDialogIds.get("checkOutDateIds").get(rowNumber));
+
+        return !String.valueOf(modelLearner.getStream_number()).equals(streamNumberET.getText().toString().trim()) ||
+                !String.valueOf(modelLearner.getCheck_in_date()).equals(checkInDateET.getText().toString().trim()) ||
+                !String.valueOf(modelLearner.getCheck_out_date()).equals(checkOutDateET.getText().toString().trim());
     }
 
     @Override
