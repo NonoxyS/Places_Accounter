@@ -12,7 +12,6 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.text.InputType;
 import android.text.method.DigitsKeyListener;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
@@ -21,13 +20,11 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.placesaccounter.db.DbManager;
-import com.example.placesaccounter.db.MyConstants;
 import com.example.placesaccounter.listAdapter.MainAdapter;
-import com.example.placesaccounter.listAdapter.ModelLearner;
-import com.example.placesaccounter.listAdapter.ModelRoom;
+import com.example.placesaccounter.models.ModelLearner;
+import com.example.placesaccounter.models.ModelRoom;
 import com.example.placesaccounter.listAdapter.OnClickListener;
 
 import java.text.SimpleDateFormat;

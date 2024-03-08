@@ -1,4 +1,4 @@
-package com.example.placesaccounter.listAdapter;
+package com.example.placesaccounter.models;
 
 public class ModelLearner {
     private final long _id;

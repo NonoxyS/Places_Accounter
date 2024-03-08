@@ -1,4 +1,4 @@
-package com.example.placesaccounter.listAdapter;
+package com.example.placesaccounter.models;
 
 import java.util.ArrayList;
 import java.util.List;

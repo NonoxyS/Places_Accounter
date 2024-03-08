@@ -1,7 +1,6 @@
 package com.example.placesaccounter.listAdapter;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +13,7 @@ import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.placesaccounter.R;
+import com.example.placesaccounter.models.ModelRoom;
 
 import java.util.ArrayList;
 import java.util.List;

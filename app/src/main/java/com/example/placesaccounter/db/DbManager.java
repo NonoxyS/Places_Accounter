@@ -3,12 +3,10 @@ package com.example.placesaccounter.db;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
 
-import com.example.placesaccounter.listAdapter.ModelLearner;
-import com.example.placesaccounter.listAdapter.ModelRoom;
+import com.example.placesaccounter.models.ModelLearner;
+import com.example.placesaccounter.models.ModelRoom;
 
 import java.io.IOException;
 import java.util.ArrayList;
