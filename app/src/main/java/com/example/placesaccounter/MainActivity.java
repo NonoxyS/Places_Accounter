@@ -1,6 +1,7 @@
 package com.example.placesaccounter;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -12,13 +13,18 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.text.InputType;
 import android.text.method.DigitsKeyListener;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.example.placesaccounter.db.DbManager;
@@ -38,8 +44,9 @@ public class MainActivity extends AppCompatActivity {
     private DbManager dbManager;
     private RecyclerView rcView;
     private MainAdapter mainAdapter;
+    private String selectedFloor = "";
     final Calendar myCalendar = Calendar.getInstance();
-    private ImageButton img_btn_Main, img_btn_Second, getImg_btn_Third, getImg_btn_Fourth;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,6 +62,8 @@ public class MainActivity extends AppCompatActivity {
             }
         };
 
+
+
         dbManager = new DbManager(this);
         mainAdapter = new MainAdapter(this, clickListener);
 
@@ -62,6 +71,9 @@ public class MainActivity extends AppCompatActivity {
         rcView.setLayoutManager(new LinearLayoutManager(this));
 
         rcView.setAdapter(mainAdapter);
+
+        initFloorFilter();
+        initSearchRoom();
     }
 
     private void showEditDialog(ModelRoom modelRoom, int position) {
@@ -313,11 +325,72 @@ public class MainActivity extends AppCompatActivity {
                 !String.valueOf(modelLearner.getCheck_out_date()).equals(checkOutDateET.getText().toString().trim());
     }
 
+private void initSearchRoom() {
+    androidx.appcompat.widget.SearchView searchView = findViewById(R.id.searchView);
+    searchView.setImeOptions(EditorInfo.IME_ACTION_DONE);
+
+    searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+        @Override
+        public boolean onQueryTextSubmit(String query) {
+            return false;
+        }
+
+        @Override
+        public boolean onQueryTextChange(String newText) {
+            mainAdapter.updateAdapter(dbManager.readFromDb(newText, selectedFloor));
+            return false;
+        }
+    });
+}
+
+private void initFloorFilter() {
+    Spinner floorFilterSpinner = findViewById(R.id.floorFilter);
+
+    ArrayAdapter<CharSequence> floorFilterAdapter = ArrayAdapter.createFromResource(this,
+            R.array.spinner_items,
+            androidx.appcompat.R.layout.support_simple_spinner_dropdown_item);
+
+    floorFilterAdapter.setDropDownViewResource(androidx.appcompat.R.layout.support_simple_spinner_dropdown_item);
+    floorFilterSpinner.setAdapter(floorFilterAdapter);
+
+    floorFilterSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        @Override
+        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            if (parent.getItemAtPosition(position).equals("Все")) {
+                selectedFloor = "";
+                mainAdapter.updateAdapter(dbManager.readFromDb("", ""));
+            }
+            else if (parent.getItemAtPosition(position).equals("Этаж 3")) {
+                selectedFloor = "3";
+                mainAdapter.updateAdapter(dbManager.readFromDb("", "3"));
+            }
+            else if (parent.getItemAtPosition(position).equals("Этаж 4")) {
+                selectedFloor = "4";
+                mainAdapter.updateAdapter(dbManager.readFromDb("", "4"));
+            }
+            else if (parent.getItemAtPosition(position).equals("Этаж 6")) {
+                selectedFloor = "6";
+                mainAdapter.updateAdapter(dbManager.readFromDb("", "6"));
+            }
+            else if (parent.getItemAtPosition(position).equals("Этаж 7")) {
+                selectedFloor = "7";
+                mainAdapter.updateAdapter(dbManager.readFromDb("", "7"));
+            }
+            Log.d("SearchView", String.valueOf(position));
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> parent) {
+
+        }
+    });
+}
+
     @Override
     protected void onResume() {
         super.onResume();
         dbManager.openDb();
-        mainAdapter.updateAdapter(dbManager.readFromDb());
+        mainAdapter.updateAdapter(dbManager.readFromDb("", selectedFloor));
     }
 
     public void goToSecondActivity(View v) {

@@ -5,6 +5,8 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -53,6 +55,7 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MyViewHolder> 
     public int getItemCount() {
         return itemArray.size();
     }
+
 
     static class MyViewHolder extends RecyclerView.ViewHolder {
         private final TextView tv_floor_number, tv_room_number, tv_room_capacity;

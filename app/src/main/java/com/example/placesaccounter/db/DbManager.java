@@ -60,14 +60,16 @@ public class DbManager {
                 new String[] { String.valueOf(_id) });
     }
 
-    public List<ModelRoom> readFromDb() {
+    public List<ModelRoom> readFromDb(String searchText, String floorFilter) {
         List<ModelRoom> roomList = new ArrayList<>();
+
+        String selection = MyConstants.ROOM_NUMBER + " like ? AND " + MyConstants.FLOOR_NUMBER + " like ?";
 
         Cursor cursor_rooms = db.query(
                 MyConstants.TABLE_ROOM_NAME,
                 null,
-                null,
-                null,
+                selection,
+                new String[]{"%" + searchText + "%", "%" + floorFilter + "%"},
                 null,
                 null,
                 null);

@@ -5,4 +5,11 @@
     <string name="check_out_date">Дата выезда</string>
     <string name="save">Сохранить</string>
     <string name="cancel">Отменить</string>
+    <string-array name="spinner_items">
+        <item>Все</item>
+        <item>Этаж 3</item>
+        <item>Этаж 4</item>
+        <item>Этаж 6</item>
+        <item>Этаж 7</item>
+    </string-array>
 </resources>
