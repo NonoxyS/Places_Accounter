@@ -356,27 +356,9 @@ private void initFloorFilter() {
     floorFilterSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-            if (parent.getItemAtPosition(position).equals("Все")) {
-                selectedFloor = "";
-                mainAdapter.updateAdapter(dbManager.readFromDb("", ""));
-            }
-            else if (parent.getItemAtPosition(position).equals("Этаж 3")) {
-                selectedFloor = "3";
-                mainAdapter.updateAdapter(dbManager.readFromDb("", "3"));
-            }
-            else if (parent.getItemAtPosition(position).equals("Этаж 4")) {
-                selectedFloor = "4";
-                mainAdapter.updateAdapter(dbManager.readFromDb("", "4"));
-            }
-            else if (parent.getItemAtPosition(position).equals("Этаж 6")) {
-                selectedFloor = "6";
-                mainAdapter.updateAdapter(dbManager.readFromDb("", "6"));
-            }
-            else if (parent.getItemAtPosition(position).equals("Этаж 7")) {
-                selectedFloor = "7";
-                mainAdapter.updateAdapter(dbManager.readFromDb("", "7"));
-            }
-            Log.d("SearchView", String.valueOf(position));
+            String[] floorNumbers = {"", "3", "4", "5", "6", "7", "8"};
+            selectedFloor = floorNumbers[position];
+            mainAdapter.updateAdapter(dbManager.readFromDb("", selectedFloor));
         }
 
         @Override

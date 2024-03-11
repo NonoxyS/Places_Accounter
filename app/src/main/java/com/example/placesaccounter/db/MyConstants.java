@@ -11,7 +11,7 @@ public class MyConstants {
     public static final String CHECK_OUT_DATE = "check_out_date";
     public static final String BEDS_NUMBER = "beds_number";
     public static final String DB_NAME = "app_db.db";
-    public static final int DB_VERSION = 1;
+    public static final int DB_VERSION = 2;
     public static final String TABLE_STRUCTURE_ROOM =
             "CREATE TABLE IF NOT EXISTS " + TABLE_ROOM_NAME +
                     " (" + FLOOR_NUMBER + " INTEGER," +
