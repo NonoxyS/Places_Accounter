@@ -35,6 +35,7 @@ import com.example.placesaccounter.listAdapter.OnClickListener;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -274,6 +275,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void removeDeletedLearners(ModelRoom modelRoom, ArrayList<Integer> indexesForDeleting) {
+        indexesForDeleting.sort(Collections.reverseOrder());
         for (int i : indexesForDeleting) {
             modelRoom.getLearners_in_room().remove(i);
         }
@@ -397,9 +399,10 @@ private String placesDeclension(int places) {
 
     switch (places % 10) {
         case 1: return " место";
-        case 2: return "места";
-        case 3: return "места";
-        case 4: return "места";
+        case 2:
+        case 3:
+        case 4:
+            return "места";
         default: return "мест";
     }
 }
