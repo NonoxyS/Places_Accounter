@@ -286,6 +286,7 @@ public class MainActivity extends AppCompatActivity {
         dbManager.deleteFromDb(modelRoom.getLearners_in_room().get(indexForDeleting).get_id());
         indexesForDeleting.add(indexForDeleting);
         mainAdapter.updateAdapter(modelRoom, position);
+        calculatePlaces(dbManager.readFromDb("", selectedFloor));
     }
 
     private void addNewLearnerAndUpdateAdapter(ModelRoom modelRoom, EditText streamNumberET, EditText checkInDateET,
@@ -297,6 +298,7 @@ public class MainActivity extends AppCompatActivity {
                 checkOutDateET.getText().toString()));
 
         mainAdapter.updateAdapter(modelRoom, position);
+        calculatePlaces(dbManager.readFromDb("", selectedFloor));
     }
 
     private void updateLearnerAndUpdateAdapter(ModelRoom modelRoom, EditText streamNumberET, EditText checkInDateET,
@@ -338,6 +340,7 @@ private void initSearchRoom() {
     searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
         @Override
         public boolean onQueryTextSubmit(String query) {
+            searchView.clearFocus();
             return false;
         }
 

@@ -119,7 +119,7 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MyViewHolder> 
         }
     }
 
-    public static boolean checkOutDateIsClose(String date) {
+    private static boolean checkOutDateIsClose(String date) {
         Date currentLocalDate = new Date();
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy", Locale.US);
 
