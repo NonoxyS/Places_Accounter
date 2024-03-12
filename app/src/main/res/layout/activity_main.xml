@@ -30,14 +30,15 @@
     <androidx.appcompat.widget.SearchView
         android:id="@+id/searchView"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:gravity="end"
+        android:layout_height="48dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginEnd="5dp"
         android:theme="@style/SearchViewStyle"
         app:iconifiedByDefault="true"
         app:layout_constraintBottom_toTopOf="@+id/rcView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:queryHint="Поиск комнаты" />
+        />
 
     <LinearLayout
         android:id="@+id/linearLayout"
@@ -114,9 +115,31 @@
         android:layout_height="0dp"
         android:layout_marginTop="5dp"
         android:layout_marginBottom="8dp"
+        android:paddingHorizontal="5dp"
         app:layout_constraintBottom_toTopOf="@+id/linearLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/searchView" />
+
+    <TextView
+        android:id="@+id/availablePlacesTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:layout_marginBottom="5dp"
+        app:layout_constraintBottom_toTopOf="@+id/rcView"
+        app:layout_constraintStart_toEndOf="@+id/floorFilterContainer"
+        app:layout_constraintTop_toBottomOf="@+id/totalPlacesTV"
+        tools:text="Свободно: 45 мест" />
+
+    <TextView
+        android:id="@+id/totalPlacesTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        app:layout_constraintBottom_toTopOf="@+id/availablePlacesTV"
+        app:layout_constraintStart_toEndOf="@+id/floorFilterContainer"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Всего: 102 мест" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

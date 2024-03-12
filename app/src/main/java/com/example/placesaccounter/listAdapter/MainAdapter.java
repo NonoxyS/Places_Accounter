@@ -5,8 +5,6 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Filter;
-import android.widget.Filterable;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -17,8 +15,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.placesaccounter.R;
 import com.example.placesaccounter.models.ModelRoom;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
 public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MyViewHolder> {
     private Context context;
@@ -68,7 +71,7 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MyViewHolder> 
 
         }
         // Get data for item in RecyclerView list
-        public void setData(ModelRoom modelRoom) {
+        private void setData(ModelRoom modelRoom) {
             tv_floor_number.setText(new StringBuilder().append("Этаж: ")
                     .append(modelRoom.getFloor_number()).toString());
 
@@ -104,7 +107,10 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MyViewHolder> 
 
                 tv_check_out_date.setText(modelRoom.getLearners_in_room().get(i).getCheck_out_date());
                 tv_check_out_date.setGravity(Gravity.CENTER_HORIZONTAL);
-                tv_check_out_date.setTextColor(ContextCompat.getColor(itemView.getContext(), R.color.deactive));
+                tv_check_out_date.setTextColor(
+                        checkOutDateIsClose(modelRoom.getLearners_in_room().get(i).getCheck_out_date()) ?
+                        ContextCompat.getColor(itemView.getContext(), R.color.checkOutDateIsClose) :
+                        ContextCompat.getColor(itemView.getContext(), R.color.deactive));
 
                 ((LinearLayout)itemView.findViewById(R.id.stream_number_layout)).addView(tv_stream_number);
                 ((LinearLayout)itemView.findViewById(R.id.check_in_date_layout)).addView(tv_check_in_date);
@@ -112,6 +118,26 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MyViewHolder> 
             }
         }
     }
+
+    public static boolean checkOutDateIsClose(String date) {
+        Date currentLocalDate = new Date();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy", Locale.US);
+
+        long diffInMillies, diffInDays;
+
+        try {
+            Date comparasionDate = dateFormat.parse(date);
+
+            diffInMillies = Math.abs(comparasionDate.getTime() - currentLocalDate.getTime());
+            diffInDays = TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS);
+
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
+
+        return diffInDays < 2;
+    }
+
     public void updateAdapter(List<ModelRoom> newList) {
         itemArray.clear();
         itemArray.addAll(newList);

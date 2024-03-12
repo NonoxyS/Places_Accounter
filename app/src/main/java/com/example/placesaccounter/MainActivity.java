@@ -13,7 +13,6 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.text.InputType;
 import android.text.method.DigitsKeyListener;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -37,6 +36,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -69,7 +69,6 @@ public class MainActivity extends AppCompatActivity {
 
         rcView = findViewById(R.id.rcView);
         rcView.setLayoutManager(new LinearLayoutManager(this));
-
         rcView.setAdapter(mainAdapter);
 
         initFloorFilter();
@@ -329,6 +328,11 @@ private void initSearchRoom() {
     androidx.appcompat.widget.SearchView searchView = findViewById(R.id.searchView);
     searchView.setImeOptions(EditorInfo.IME_ACTION_DONE);
 
+    EditText editText = searchView.findViewById(androidx.appcompat.R.id.search_src_text);
+    editText.setHint("Поиск");
+    editText.setTextColor(getColor(R.color.deactive));
+    editText.setTextSize(14);
+
     searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
         @Override
         public boolean onQueryTextSubmit(String query) {
@@ -359,6 +363,7 @@ private void initFloorFilter() {
             String[] floorNumbers = {"", "3", "4", "5", "6", "7", "8"};
             selectedFloor = floorNumbers[position];
             mainAdapter.updateAdapter(dbManager.readFromDb("", selectedFloor));
+            calculatePlaces(dbManager.readFromDb("", selectedFloor));
         }
 
         @Override
@@ -368,11 +373,43 @@ private void initFloorFilter() {
     });
 }
 
+private void calculatePlaces(List<ModelRoom> roomList) {
+    TextView tv_availablePlaces = findViewById(R.id.availablePlacesTV);
+    TextView tv_totalPlaces = findViewById(R.id.totalPlacesTV);
+
+    int availablePlaces = 0, totalPlaces = 0;
+
+    for (ModelRoom modelRoom : roomList) {
+        totalPlaces += modelRoom.getBeds_number();
+        availablePlaces += modelRoom.getBeds_number() - modelRoom.getLearners_in_room().size();
+    }
+
+    tv_availablePlaces.setText(new StringBuilder().append("Свободно: ").
+            append(availablePlaces).append(" ").append(placesDeclension(availablePlaces)));
+
+    tv_totalPlaces.setText(new StringBuilder().
+            append("Всего: ").append(totalPlaces).append(" ").append(placesDeclension(totalPlaces)));
+}
+
+private String placesDeclension(int places) {
+    if (places >= 10 && places <= 20)
+        return "мест";
+
+    switch (places % 10) {
+        case 1: return " место";
+        case 2: return "места";
+        case 3: return "места";
+        case 4: return "места";
+        default: return "мест";
+    }
+}
+
     @Override
     protected void onResume() {
         super.onResume();
         dbManager.openDb();
         mainAdapter.updateAdapter(dbManager.readFromDb("", selectedFloor));
+        calculatePlaces(dbManager.readFromDb("", selectedFloor));
     }
 
     public void goToSecondActivity(View v) {

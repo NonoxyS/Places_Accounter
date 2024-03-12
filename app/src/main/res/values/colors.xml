@@ -10,4 +10,5 @@
     <color name="background03">#FF1F222A</color>
     <color name="background02">#FF262A34</color>
     <color name="deactive">#FF5E6272</color>
+    <color name="checkOutDateIsClose">#BD3442</color>
 </resources>
