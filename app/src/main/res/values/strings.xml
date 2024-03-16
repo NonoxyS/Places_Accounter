@@ -3,6 +3,9 @@
     <string name="stream_number">Поток</string>
     <string name="check_in_date">Дата въезда</string>
     <string name="check_out_date">Дата выезда</string>
+    <string name="stream_number_cardED"><font size="14">Поток</font></string>
+    <string name="check_in_date_cardED"><font size="14">Дата въезда</font></string>
+    <string name="check_out_date_cardED"><font size="14">Дата выезда</font></string>
     <string name="save">Сохранить</string>
     <string name="cancel">Отменить</string>
     <string-array name="spinner_items">

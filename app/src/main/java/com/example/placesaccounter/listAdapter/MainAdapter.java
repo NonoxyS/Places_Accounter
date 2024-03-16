@@ -1,5 +1,7 @@
 package com.example.placesaccounter.listAdapter;
 
+import static com.example.placesaccounter.CheckOutDateChecker.checkOutDateIsClose;
+
 import android.content.Context;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -117,25 +119,6 @@ public class MainAdapter extends RecyclerView.Adapter<MainAdapter.MyViewHolder> 
                 ((LinearLayout)itemView.findViewById(R.id.check_out_date_layout)).addView(tv_check_out_date);
             }
         }
-    }
-
-    private static boolean checkOutDateIsClose(String date) {
-        Date currentLocalDate = new Date();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy", Locale.US);
-
-        long diffInMillies, diffInDays;
-
-        try {
-            Date comparasionDate = dateFormat.parse(date);
-
-            diffInMillies = Math.abs(comparasionDate.getTime() - currentLocalDate.getTime());
-            diffInDays = TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS);
-
-        } catch (ParseException e) {
-            throw new RuntimeException(e);
-        }
-
-        return diffInDays < 2;
     }
 
     public void updateAdapter(List<ModelRoom> newList) {
