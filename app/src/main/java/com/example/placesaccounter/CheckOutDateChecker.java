@@ -16,7 +16,7 @@ public class CheckOutDateChecker {
         try {
             Date comparasionDate = dateFormat.parse(date);
 
-            diffInMillies = Math.abs(comparasionDate.getTime() - currentLocalDate.getTime());
+            diffInMillies = comparasionDate.getTime() - currentLocalDate.getTime();
             diffInDays = TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS);
 
         } catch (ParseException e) {

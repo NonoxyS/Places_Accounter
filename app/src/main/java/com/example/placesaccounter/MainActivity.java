@@ -427,7 +427,7 @@ private void calculatePlaces(List<ModelRoom> roomList) {
 }
 
 private String placesDeclension(int places) {
-    if (places >= 10 && places <= 20)
+    if (places % 100 >= 10 && places % 100 <= 20)
         return "мест";
 
     switch (places % 10) {
@@ -462,6 +462,12 @@ private String placesDeclension(int places) {
     public void goToFourthActivity(View v) {
         Intent intent = new Intent(this, FourthActivity.class);
         startActivity(intent);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        dbManager.closeDb();
     }
 
     @Override
