@@ -4,13 +4,17 @@
         <!-- Customize your light theme here. -->
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
         <item name="android:statusBarColor">@color/background</item>
+        <item name="colorPrimary">@color/buttons_color</item>
+        <item name="colorSecondary">@color/background</item>
     </style>
 
     <style name="SearchViewStyle" parent="Widget.AppCompat.SearchView">
         <item name="android:textAppearance">@style/TextAppearance.AppCompat</item>
+        <item name="android:textSize">14sp</item>
         <item name="android:textColor">@color/deactive</item>
         <item name="android:editTextColor">@color/deactive</item>
         <item name="android:textColorHint">@color/deactive</item>
+        <item name="android:maxWidth">150dp</item>
     </style>
 
     <style name="Theme.PlacesAccounter" parent="Base.Theme.PlacesAccounter" />

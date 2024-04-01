@@ -1,7 +1,10 @@
 package com.example.placesaccounter;
 
+import static com.example.placesaccounter.CheckOutDateChecker.checkOutDateIsClose;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -13,7 +16,6 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.text.InputType;
 import android.text.method.DigitsKeyListener;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -36,7 +38,9 @@ import com.example.placesaccounter.listAdapter.OnClickListener;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -69,7 +73,6 @@ public class MainActivity extends AppCompatActivity {
 
         rcView = findViewById(R.id.rcView);
         rcView.setLayoutManager(new LinearLayoutManager(this));
-
         rcView.setAdapter(mainAdapter);
 
         initFloorFilter();
@@ -118,17 +121,21 @@ public class MainActivity extends AppCompatActivity {
             residentInfoContainer.setLayoutParams(new LinearLayout.LayoutParams
                     (LinearLayout.LayoutParams.MATCH_PARENT, (int) (48 * scaleDisplay + 0.5f)));
             residentInfoContainer.setOrientation(LinearLayout.HORIZONTAL);
+            residentInfoContainer.setPadding(20, 20, 20, 20);
 
-            TextView rowNumber = new TextView(this);
-            rowNumber.setLayoutParams(new LinearLayout.LayoutParams
-                    (LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT));
-            rowNumber.setText(new StringBuilder().append(i + 1).append(":").toString());
-            rowNumber.setGravity(Gravity.CENTER_VERTICAL);
 
             EditText streamNumberEditText = new EditText(this);
-            streamNumberEditText.setLayoutParams(new LinearLayout.LayoutParams
-                    (LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT));
+            LinearLayout.LayoutParams streamNumberParams = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                    LinearLayout.LayoutParams.MATCH_PARENT);
+            streamNumberParams.setMargins(0, 5, 10, 5);
+            streamNumberEditText.setLayoutParams(streamNumberParams);
             streamNumberEditText.setHint(R.string.stream_number);
+            streamNumberEditText.setHintTextColor(getColor(R.color.deactive));
+            streamNumberEditText.setTextColor(getColor(R.color.deactive));
+            streamNumberEditText.setBackgroundResource(R.drawable.edit_item_stroke);
+            streamNumberEditText.setPadding(30, 0, 30, 0);
+            streamNumberEditText.setTextSize(15);
             streamNumberEditText.setGravity(Gravity.CENTER);
             streamNumberIds.put(i, View.generateViewId());
             streamNumberEditText.setInputType(InputType.TYPE_CLASS_NUMBER);
@@ -136,9 +143,17 @@ public class MainActivity extends AppCompatActivity {
             streamNumberEditText.setId(streamNumberIds.get(i));
 
             EditText checkInDateEditText = new EditText(this);
-            checkInDateEditText.setLayoutParams(new LinearLayout.LayoutParams
-                    ((int) (120 * scaleDisplay + 0.5f), LinearLayout.LayoutParams.MATCH_PARENT));
-            checkInDateEditText.setHint(R.string.check_in_date);
+            LinearLayout.LayoutParams checkInDateParams = new LinearLayout.LayoutParams(
+                    (int) (120 * scaleDisplay + 0.5f),
+                    LinearLayout.LayoutParams.MATCH_PARENT);
+            checkInDateParams.setMargins(10, 5, 10, 5);
+            checkInDateEditText.setLayoutParams(checkInDateParams);
+            checkInDateEditText.setHint(R.string.check_in_date_cardED);
+            checkInDateEditText.setHintTextColor(getColor(R.color.deactive));
+            checkInDateEditText.setTextColor(getColor(R.color.deactive));
+            checkInDateEditText.setBackgroundResource(R.drawable.edit_item_stroke);
+            checkInDateEditText.setPadding(30, 0, 30, 0);
+            checkInDateEditText.setTextSize(15);
             checkInDateEditText.setClickable(false);
             checkInDateEditText.setFocusable(false);
             checkInDateEditText.setGravity(Gravity.CENTER);
@@ -147,9 +162,17 @@ public class MainActivity extends AppCompatActivity {
             checkInDateEditText.setId(checkInDateIds.get(i));
 
             EditText checkOutDateEditText = new EditText(this);
-            checkOutDateEditText.setLayoutParams(new LinearLayout.LayoutParams
-                    ((int) (120 * scaleDisplay + 0.5f), LinearLayout.LayoutParams.MATCH_PARENT));
-            checkOutDateEditText.setHint(R.string.check_out_date);
+            LinearLayout.LayoutParams checkOutDateParams = new LinearLayout.LayoutParams(
+                    (int) (120 * scaleDisplay + 0.5f),
+                    LinearLayout.LayoutParams.MATCH_PARENT);
+            checkOutDateParams.setMargins(10, 5, 10, 5);
+            checkOutDateEditText.setLayoutParams(checkOutDateParams);
+            checkOutDateEditText.setHint(R.string.check_out_date_cardED);
+            checkOutDateEditText.setHintTextColor(getColor(R.color.deactive));
+            checkOutDateEditText.setTextColor(getColor(R.color.deactive));
+            checkOutDateEditText.setBackgroundResource(R.drawable.edit_item_stroke);
+            checkOutDateEditText.setPadding(30, 0, 30, 0);
+            checkOutDateEditText.setTextSize(15);
             checkOutDateEditText.setClickable(false);
             checkOutDateEditText.setFocusable(false);
             checkOutDateEditText.setGravity(Gravity.CENTER);
@@ -158,10 +181,13 @@ public class MainActivity extends AppCompatActivity {
             checkOutDateEditText.setId(checkOutDateIds.get(i));
 
             ImageButton deleteResidentInfoBtn = new ImageButton(this);
-            deleteResidentInfoBtn.setLayoutParams(new LinearLayout.LayoutParams
-                    (LinearLayout.LayoutParams.MATCH_PARENT, (int) (30 * scaleDisplay + 0.5f)));
-            deleteResidentInfoBtn.setBackgroundResource(R.drawable.roundcorner);
-            deleteResidentInfoBtn.setImageResource(android.R.drawable.ic_menu_delete);
+            LinearLayout.LayoutParams deleteBtnParams = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    (int) (30 * scaleDisplay + 0.5f));
+            deleteBtnParams.setMargins(10, 5, 0, 5);
+            deleteResidentInfoBtn.setLayoutParams(deleteBtnParams);
+            deleteResidentInfoBtn.setBackgroundResource(R.drawable.edit_item_stroke);
+            deleteResidentInfoBtn.setImageResource(R.drawable.ic_delete);
             ((LinearLayout.LayoutParams) deleteResidentInfoBtn.getLayoutParams()).gravity = Gravity.CENTER;
 
             deleteResidentInfoBtn.setOnClickListener(new View.OnClickListener() {
@@ -178,9 +204,13 @@ public class MainActivity extends AppCompatActivity {
                 streamNumberEditText.setText(String.valueOf(modelRoom.getLearners_in_room().get(i).getStream_number()));
                 checkInDateEditText.setText(String.valueOf(modelRoom.getLearners_in_room().get(i).getCheck_in_date()));
                 checkOutDateEditText.setText(String.valueOf(modelRoom.getLearners_in_room().get(i).getCheck_out_date()));
+
+                checkOutDateEditText.setTextColor(checkOutDateIsClose(checkOutDateEditText.getText().toString()) ?
+                        getColor(R.color.checkOutDateIsClose) :
+                        getColor(R.color.deactive));
             }
 
-            residentInfoContainer.addView(rowNumber);
+
             residentInfoContainer.addView(streamNumberEditText);
             residentInfoContainer.addView(checkInDateEditText);
             residentInfoContainer.addView(checkOutDateEditText);
@@ -275,6 +305,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void removeDeletedLearners(ModelRoom modelRoom, ArrayList<Integer> indexesForDeleting) {
+        indexesForDeleting.sort(Collections.reverseOrder());
         for (int i : indexesForDeleting) {
             modelRoom.getLearners_in_room().remove(i);
         }
@@ -285,6 +316,7 @@ public class MainActivity extends AppCompatActivity {
         dbManager.deleteFromDb(modelRoom.getLearners_in_room().get(indexForDeleting).get_id());
         indexesForDeleting.add(indexForDeleting);
         mainAdapter.updateAdapter(modelRoom, position);
+        calculatePlaces(dbManager.readFromDb("", selectedFloor));
     }
 
     private void addNewLearnerAndUpdateAdapter(ModelRoom modelRoom, EditText streamNumberET, EditText checkInDateET,
@@ -296,6 +328,7 @@ public class MainActivity extends AppCompatActivity {
                 checkOutDateET.getText().toString()));
 
         mainAdapter.updateAdapter(modelRoom, position);
+        calculatePlaces(dbManager.readFromDb("", selectedFloor));
     }
 
     private void updateLearnerAndUpdateAdapter(ModelRoom modelRoom, EditText streamNumberET, EditText checkInDateET,
@@ -329,9 +362,15 @@ private void initSearchRoom() {
     androidx.appcompat.widget.SearchView searchView = findViewById(R.id.searchView);
     searchView.setImeOptions(EditorInfo.IME_ACTION_DONE);
 
+    EditText editText = searchView.findViewById(androidx.appcompat.R.id.search_src_text);
+    editText.setHint("Поиск");
+    editText.setTextColor(getColor(R.color.deactive));
+    editText.setTextSize(14);
+
     searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
         @Override
         public boolean onQueryTextSubmit(String query) {
+            searchView.clearFocus();
             return false;
         }
 
@@ -359,6 +398,7 @@ private void initFloorFilter() {
             String[] floorNumbers = {"", "3", "4", "5", "6", "7", "8"};
             selectedFloor = floorNumbers[position];
             mainAdapter.updateAdapter(dbManager.readFromDb("", selectedFloor));
+            calculatePlaces(dbManager.readFromDb("", selectedFloor));
         }
 
         @Override
@@ -368,11 +408,44 @@ private void initFloorFilter() {
     });
 }
 
+private void calculatePlaces(List<ModelRoom> roomList) {
+    TextView tv_availablePlaces = findViewById(R.id.availablePlacesTV);
+    TextView tv_totalPlaces = findViewById(R.id.totalPlacesTV);
+
+    int availablePlaces = 0, totalPlaces = 0;
+
+    for (ModelRoom modelRoom : roomList) {
+        totalPlaces += modelRoom.getBeds_number();
+        availablePlaces += modelRoom.getBeds_number() - modelRoom.getLearners_in_room().size();
+    }
+
+    tv_availablePlaces.setText(new StringBuilder().append("Свободно: ").
+            append(availablePlaces).append(" ").append(placesDeclension(availablePlaces)));
+
+    tv_totalPlaces.setText(new StringBuilder().
+            append("Всего: ").append(totalPlaces).append(" ").append(placesDeclension(totalPlaces)));
+}
+
+private String placesDeclension(int places) {
+    if (places % 100 >= 10 && places % 100 <= 20)
+        return "мест";
+
+    switch (places % 10) {
+        case 1: return " место";
+        case 2:
+        case 3:
+        case 4:
+            return "места";
+        default: return "мест";
+    }
+}
+
     @Override
     protected void onResume() {
         super.onResume();
         dbManager.openDb();
         mainAdapter.updateAdapter(dbManager.readFromDb("", selectedFloor));
+        calculatePlaces(dbManager.readFromDb("", selectedFloor));
     }
 
     public void goToSecondActivity(View v) {
@@ -389,6 +462,12 @@ private void initFloorFilter() {
     public void goToFourthActivity(View v) {
         Intent intent = new Intent(this, FourthActivity.class);
         startActivity(intent);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        dbManager.closeDb();
     }
 
     @Override
